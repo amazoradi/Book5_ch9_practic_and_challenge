@@ -102,11 +102,19 @@ export default class ApplicationViews extends Component {
     return (
       <React.Fragment>
         <Route exact path="/" render={(props) => {
+          if (this.isAuthenticated()) {
           return <LocationList locations={this.state.locations} />
+          } else {
+            return <Redirect to="/login" />
+          }
         }} />
         <Route path="/login" component={Login} />
         <Route exact path="/animals" render={(props) => {
+          if (this.isAuthenticated()) {
           return <AnimalList {...props} animals={this.state.animals} owners={this.state.owners} animalOwners={this.state.animalOwners} deleteAnimal={this.deleteAnimal} />
+          } else {
+            return <Redirect to="/login" />
+          }
         }} />
         <Route exact path="/employees" render={(props) => {
           if (this.isAuthenticated()) {
@@ -116,7 +124,11 @@ export default class ApplicationViews extends Component {
           }
         }} />
         <Route exact path="/owners" render={(props) => {
+          if (this.isAuthenticated()) {
           return <OwnerList {...props} owners={this.state.owners} deleteOwner={this.deleteOwner} />
+          } else {
+            return <Redirect to="/login" />
+          }
         }} />
         <Route path="/animals/:animalId(\d+)" render={(props) => {
           return <AnimalDetails {...props} deleteAnimal={this.deleteAnimal} animals={this.state.animals} />
