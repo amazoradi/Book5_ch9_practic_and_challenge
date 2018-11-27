@@ -1,4 +1,4 @@
-import { Route } from 'react-router-dom'
+import { Route, Redirect } from 'react-router-dom'
 import React, { Component } from "react"
 import AnimalList from './animals/AnimalList'
 import LocationList from './locations/LocationList'
@@ -16,7 +16,7 @@ import OwnerDetails from './owners/OwnerDetails'
 import AnimalForm from "./animals/AnimalForm"
 import EmployeeForm from "./employee/EmployeeForm"
 import OwnerForm from "./owners/OwnerForm"
-
+import Login from './authentication/Login'
 
 
 
@@ -45,6 +45,9 @@ export default class ApplicationViews extends Component {
       .then(animalOwners => newState.animalOwners = animalOwners)
       .then(() => this.setState(newState))
   }
+
+
+  isAuthenticated = () => sessionStorage.getItem("credentials") !== null
 
   deleteAnimal = id => {
     return AnimalManager.removeAndList(id)
@@ -101,11 +104,16 @@ export default class ApplicationViews extends Component {
         <Route exact path="/" render={(props) => {
           return <LocationList locations={this.state.locations} />
         }} />
+        <Route path="/login" component={Login} />
         <Route exact path="/animals" render={(props) => {
           return <AnimalList {...props} animals={this.state.animals} owners={this.state.owners} animalOwners={this.state.animalOwners} deleteAnimal={this.deleteAnimal} />
         }} />
         <Route exact path="/employees" render={(props) => {
+          if (this.isAuthenticated()) {
           return <EmployeeList {...props} employees={this.state.employees} fireEmployee={this.fireEmployee} />
+          } else {
+            return <Redirect to="/login" />
+          }
         }} />
         <Route exact path="/owners" render={(props) => {
           return <OwnerList {...props} owners={this.state.owners} deleteOwner={this.deleteOwner} />
